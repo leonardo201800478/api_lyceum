@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/"
-    PROJECT_NAME: str = "API Lyceum - Alunos"
+    PROJECT_NAME: str = "API Lyceum"
     
     DB_USER: str = "postgres"
     DB_PASSWORD: str = "postgres"
