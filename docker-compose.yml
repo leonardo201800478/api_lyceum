@@ -1,39 +1,44 @@
-
-version: "3.9"
+version: '3.8'
 
 services:
-  db:
-    image: postgres:16
-    container_name: api_lyceum_db
-    restart: unless-stopped
+  postgres:
+    image: postgres:15-alpine
+    container_name: lyceum_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-api_lyceum}
-      POSTGRES_USER: ${POSTGRES_USER:-lyceum_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lyceum_pass}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lyceum_db}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lyceum_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lyceum_user} -d ${POSTGRES_DB:-api_lyceum}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  app:
+  api:
     build: .
-    container_name: api_lyceum_app
-    restart: unless-stopped
-    env_file:
-      - .env
+    container_name: lyceum_api
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-lyceum_db}
     ports:
-      - "8000:8000"
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+      - "${API_PORT:-8000}:8000"
     volumes:
-      - .:/app
+      - ./src:/app/src
+    networks:
+      - lyceum_network
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
+networks:
+  lyceum_network:
+    driver: bridge
 
 volumes:
-  pgdata:
+  postgres_data:
