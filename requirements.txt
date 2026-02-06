@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy
+pydantic
+python-dotenv
+alembic
+
+# PostgreSQL
+psycopg2-binary
+
+# Futuro: SQL Server (quando for integrar com instituição)
+pyodbc
