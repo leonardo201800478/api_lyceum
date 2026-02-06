@@ -1,21 +1,15 @@
-# FastAPI
-fastapi==0.104.1
+fastapi==0.104.0
 uvicorn[standard]==0.24.0
-
-# Database
 sqlalchemy==2.0.23
-alembic==1.12.1
 psycopg2-binary==2.9.9
-
-# Environment
-python-dotenv==1.0.0
-
-# Pydantic
+alembic==1.12.1
 pydantic==2.5.0
 pydantic-settings==2.1.0
-
-# CORS
-starlette==0.27.0
-
-# Future: SQL Server
-# pyodbc==5.0.1
+python-dotenv==1.0.0
+requests==2.31.0
+httpx==0.25.2
+redis==5.0.1
+celery==5.3.4
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+regex==2023.10.3  # Adicionado para validação de patterns
