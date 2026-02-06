@@ -14,9 +14,9 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Ajustar em produção
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET"],  # Apenas GET
+    allow_methods=["GET"],
     allow_headers=["*"],
 )
 
@@ -25,13 +25,13 @@ app.include_router(alunos_router)
 
 @app.get("/")
 async def root():
-    """Endpoint raiz com informações da API."""
+    """Endpoint raiz com informa��es da API."""
     return {
         "message": "API Lyceum - Alunos",
         "version": "1.0.0",
         "description": "API para consulta de dados de alunos",
         "endpoints": {
-            "alunos": "/alunos",
+            "listar_alunos": "/alunos",
             "aluno_por_id": "/alunos/{id}",
             "aluno_por_cpf": "/alunos/cpf/{cpf}",
             "aluno_por_matricula": "/alunos/matricula/{matricula}",

@@ -7,35 +7,25 @@ from src.schemas.aluno import Aluno
 
 router = APIRouter()
 
-@router.get(
-    "/alunos",
-    response_model=List[Aluno],
-    summary="Listar alunos",
-    description="Retorna uma lista paginada de alunos com filtros opcionais."
-)
+@router.get("/alunos", response_model=List[Aluno])
 async def listar_alunos(
-    pagina: int = Query(1, ge=1, description="N√∫mero da p√°gina"),
-    limite: int = Query(50, ge=1, le=200, description="Itens por p√°gina"),
+    pagina: int = Query(1, ge=1, description="N˙mero da p·gina"),
+    limite: int = Query(50, ge=1, le=200, description="Itens por p·gina"),
     ativo: Optional[bool] = Query(None, description="Filtrar por status ativo/inativo"),
     cpf: Optional[str] = Query(None, description="Filtrar por CPF (exato)"),
-    matricula: Optional[str] = Query(None, description="Filtrar por matr√≠cula (exato)"),
+    matricula: Optional[str] = Query(None, description="Filtrar por matrÌcula (exato)"),
     nome: Optional[str] = Query(None, description="Buscar por nome (parcial)"),
     email: Optional[str] = Query(None, description="Filtrar por email (exato)"),
-    instituicao_id: Optional[int] = Query(None, description="Filtrar por ID da institui√ß√£o"),
+    instituicao_id: Optional[int] = Query(None, description="Filtrar por ID da instituiÁ„o"),
     db: Session = Depends(get_db)
 ):
     """
-    Lista alunos com suporte a pagina√ß√£o e m√∫ltiplos filtros.
-    
-    Retorna:
-    - Lista de objetos Aluno com os dados completos
+    Lista alunos com suporte a paginaÁ„o e m˙ltiplos filtros.
     """
     repository = AlunoRepository(db)
     
-    # Calcular skip para pagina√ß√£o
     skip = (pagina - 1) * limite
     
-    # Aplicar filtros
     filtros = {}
     if ativo is not None:
         filtros['ativo'] = ativo
@@ -57,24 +47,10 @@ async def listar_alunos(
     
     return alunos
 
-@router.get(
-    "/alunos/{aluno_id}",
-    response_model=Aluno,
-    summary="Obter aluno por ID",
-    description="Retorna os dados completos de um aluno espec√≠fico."
-)
-async def obter_aluno_por_id(
-    aluno_id: int,
-    db: Session = Depends(get_db)
-):
+@router.get("/alunos/{aluno_id}", response_model=Aluno)
+async def obter_aluno_por_id(aluno_id: int, db: Session = Depends(get_db)):
     """
-    Obt√©m um aluno espec√≠fico pelo seu ID.
-    
-    Par√¢metros:
-    - aluno_id: ID √∫nico do aluno
-    
-    Retorna:
-    - Objeto Aluno completo ou 404 se n√£o encontrado
+    ObtÈm um aluno especÌfico pelo seu ID.
     """
     repository = AlunoRepository(db)
     aluno = repository.get_by_id(aluno_id)
@@ -82,29 +58,15 @@ async def obter_aluno_por_id(
     if not aluno:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Aluno com ID {aluno_id} n√£o encontrado"
+            detail=f"Aluno com ID {aluno_id} n„o encontrado"
         )
     
     return aluno
 
-@router.get(
-    "/alunos/cpf/{cpf}",
-    response_model=Aluno,
-    summary="Obter aluno por CPF",
-    description="Retorna os dados de um aluno pelo CPF."
-)
-async def obter_aluno_por_cpf(
-    cpf: str,
-    db: Session = Depends(get_db)
-):
+@router.get("/alunos/cpf/{cpf}", response_model=Aluno)
+async def obter_aluno_por_cpf(cpf: str, db: Session = Depends(get_db)):
     """
-    Obt√©m um aluno pelo CPF.
-    
-    Par√¢metros:
-    - cpf: CPF do aluno (formatado ou n√£o)
-    
-    Retorna:
-    - Objeto Aluno completo ou 404 se n√£o encontrado
+    ObtÈm um aluno pelo CPF.
     """
     repository = AlunoRepository(db)
     aluno = repository.get_by_cpf(cpf)
@@ -112,29 +74,15 @@ async def obter_aluno_por_cpf(
     if not aluno:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Aluno com CPF {cpf} n√£o encontrado"
+            detail=f"Aluno com CPF {cpf} n„o encontrado"
         )
     
     return aluno
 
-@router.get(
-    "/alunos/matricula/{matricula}",
-    response_model=Aluno,
-    summary="Obter aluno por matr√≠cula",
-    description="Retorna os dados de um aluno pelo n√∫mero de matr√≠cula."
-)
-async def obter_aluno_por_matricula(
-    matricula: str,
-    db: Session = Depends(get_db)
-):
+@router.get("/alunos/matricula/{matricula}", response_model=Aluno)
+async def obter_aluno_por_matricula(matricula: str, db: Session = Depends(get_db)):
     """
-    Obt√©m um aluno pelo n√∫mero de matr√≠cula.
-    
-    Par√¢metros:
-    - matricula: N√∫mero de matr√≠cula do aluno
-    
-    Retorna:
-    - Objeto Aluno completo ou 404 se n√£o encontrado
+    ObtÈm um aluno pelo n˙mero de matrÌcula.
     """
     repository = AlunoRepository(db)
     aluno = repository.get_by_matricula(matricula)
@@ -142,29 +90,15 @@ async def obter_aluno_por_matricula(
     if not aluno:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Aluno com matr√≠cula {matricula} n√£o encontrado"
+            detail=f"Aluno com matrÌcula {matricula} n„o encontrado"
         )
     
     return aluno
 
-@router.get(
-    "/alunos/email/{email}",
-    response_model=Aluno,
-    summary="Obter aluno por email",
-    description="Retorna os dados de um aluno pelo email."
-)
-async def obter_aluno_por_email(
-    email: str,
-    db: Session = Depends(get_db)
-):
+@router.get("/alunos/email/{email}", response_model=Aluno)
+async def obter_aluno_por_email(email: str, db: Session = Depends(get_db)):
     """
-    Obt√©m um aluno pelo email.
-    
-    Par√¢metros:
-    - email: Endere√ßo de email do aluno
-    
-    Retorna:
-    - Objeto Aluno completo ou 404 se n√£o encontrado
+    ObtÈm um aluno pelo email.
     """
     repository = AlunoRepository(db)
     aluno = repository.get_by_email(email)
@@ -172,7 +106,7 @@ async def obter_aluno_por_email(
     if not aluno:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Aluno com email {email} n√£o encontrado"
+            detail=f"Aluno com email {email} n„o encontrado"
         )
     
     return aluno

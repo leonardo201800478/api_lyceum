@@ -15,7 +15,6 @@ class Aluno(BaseModel):
     matricula = Column(String(50), unique=True, nullable=False, index=True)
     ativo = Column(Boolean, default=True, index=True)
     
-    # Relacionamento com instituição
     instituicao_id = Column(Integer, ForeignKey("instituicoes.id"), nullable=False, index=True)
     instituicao = relationship("Instituicao", back_populates="alunos", lazy="joined")
     

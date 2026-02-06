@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, func
+from sqlalchemy import Column, DateTime
 from sqlalchemy.ext.declarative import declared_attr
 from src.core.database import Base
 from datetime import datetime
