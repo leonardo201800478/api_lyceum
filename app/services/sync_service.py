@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from datetime import datetime
 import asyncio
 import logging
@@ -30,11 +30,46 @@ class SyncService:
         
         logger.info("SyncService inicializado (modo READ-ONLY para API Lyceum)")
     
-    async def check_api_health(self) -> Dict[str, Any]:  # noqa: F821
+    async def check_api_health(self) -> Dict[str, Any]:
         """Verifica saúde da API Lyceum (GET apenas)"""
         return await self.api_client.health_check()
     
-   
+    # Adicionar este método após o __init__:
+    async def normalize_aluno_data(self, aluno_data: Dict) -> Dict:
+        """Normaliza dados do aluno da API para o modelo local"""
+        normalized = {}
+        
+        # Mapeamento de campos
+        field_mappings = {
+            'aluno': ('aluno', self._safe_str),
+            'ano_ingresso': ('ano_ingresso', self._safe_int),
+            'anoconcl2g': ('anoconcl2g', self._safe_int),
+            'areacnpq': ('areacnpq', self._safe_str),
+            'candidato': ('candidato', self._safe_str),
+            'nome_compl': ('nome_compl', self._safe_str),
+            'nome_abrev': ('nome_abrev', self._safe_str),
+            'curso': ('curso', self._safe_str),
+            'serie': ('serie', self._safe_int),
+            'turno': ('turno', self._safe_str),
+            'sit_aluno': ('sit_aluno', self._safe_str),
+            'representante_turma': ('representante_turma', self._safe_representante),
+            'e_mail_interno': ('e_mail_interno', self._safe_str),
+            'stamp_atualizacao': ('stamp_atualizacao', self._safe_str),
+            'tipo_aluno': ('tipo_aluno', self._safe_str),
+            'unidade_ensino': ('unidade_ensino', self._safe_str),
+        }
+        
+        # Processa cada campo
+        for api_field, (db_field, converter) in field_mappings.items():
+            value = aluno_data.get(api_field)
+            normalized[db_field] = converter(value) if converter else value
+        
+        # Adiciona timestamps
+        normalized['data_sincronizacao'] = datetime.now()
+        normalized['sincronizado'] = True
+        
+        return normalized
+
     def _safe_int(self, value) -> Optional[int]:
         """Converte valor para inteiro de forma segura"""
         if value is None:

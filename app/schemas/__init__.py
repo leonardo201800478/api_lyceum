@@ -1,11 +1,11 @@
+# Corrigir o __init__.py de schemas:
 from .aluno import (
     AlunoBase,
     AlunoCreate,
     AlunoUpdate,
     AlunoInDB,
     AlunoResponse,
-    AlunoListResponse,
-    PaginatedResponse,
+    AlunoFull,
 )
 
 __all__ = [
@@ -14,6 +14,6 @@ __all__ = [
     "AlunoUpdate",
     "AlunoInDB",
     "AlunoResponse",
-    "AlunoListResponse",
-    "PaginatedResponse",
+    "AlunoFull",
 ]
+# Remover "PaginatedResponse" - não está definido em aluno.py

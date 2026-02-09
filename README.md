@@ -123,6 +123,76 @@ api-lyceum-fastapi/
 ├── docker/                # Configurações Docker
 ├── tests/                 # Testes automatizados
 └── scripts/              # Scripts auxiliares
+---------------- // --------------------- // -------------------
+api_lyceum/
+│
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   ├── endpoints/
+│   │   │   ├── __init__.py
+│   │   │   ├── alunos.py
+│   │   │   ├── health.py
+│   │   │   ├── security.py
+│   │   │   └── sync.py
+│   │   ├── __init__.py
+│   │   ├── api.py
+│   │   └── deps.py
+│   │
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   └── security.py
+│   │
+│   ├── crud/
+│   │   ├── __init__.py
+│   │   └── aluno.py
+│   │
+│   ├── middleware/
+│   │   └── security.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── ly_aluno.py
+│   │
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── aluno.py
+│   │
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── lyceum_api.py
+│   │   └── sync_service.py
+│   │
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── pagination.py
+│   │
+│   ├── __init__.py
+│   └── main.py
+│
+├── docker/
+│   ├── Dockerfile
+│   └── init-db.sql
+│
+├── migrations/
+│   ├── env.py
+│   └── script.py.mako
+│
+├── scripts/
+│   └── init_project.py
+│
+├── tests/
+│   └── test_security.py
+│
+├── .env.example
+├── .gitignore
+├── README.md
+├── alembic.ini
+├── pyproject.toml
+└── requirements.txt
+
 🔒 Segurança
 CORS configurado
 

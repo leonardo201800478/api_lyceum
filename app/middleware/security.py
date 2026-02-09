@@ -3,22 +3,16 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 import logging
 import re
+import asyncio  # ADICIONADO
 
 logger = logging.getLogger(__name__)
 
-
 class LyceumAPISecurityMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware para validar requisições para API Lyceum
-    
-    Garante que apenas GET seja usado e adiciona rate limiting
-    """
+    """Middleware para validar requisições para API Lyceum"""
     
     async def dispatch(self, request: Request, call_next):
-        # Verificar se é uma requisição para API Lyceum
         path = request.url.path
         
-        # Padrão para identificar endpoints que chamam API Lyceum
         lyceum_patterns = [
             r'^/api/v1/sync',
             r'^/api/v1/alunos/sync',
@@ -30,13 +24,9 @@ class LyceumAPISecurityMiddleware(BaseHTTPMiddleware):
         )
         
         if is_lyceum_endpoint:
-            # Log da requisição
             logger.info(f"Requisição para endpoint Lyceum: {request.method} {path}")
             
-            # Validar método HTTP (apenas GET para endpoints de consulta)
             if request.method.upper() not in ["GET", "POST"]:
-                # POST é permitido apenas para iniciar sincronizações
-                # mas a sincronização em si usará apenas GET
                 if request.method.upper() != "POST" or not path.endswith("/sync"):
                     logger.error(f"Método {request.method} não permitido para {path}")
                     raise HTTPException(
@@ -44,17 +34,11 @@ class LyceumAPISecurityMiddleware(BaseHTTPMiddleware):
                         detail=f"Método {request.method} não permitido"
                     )
         
-        # Continuar com a requisição
         response = await call_next(request)
         return response
 
-
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware de rate limiting para API Lyceum
-    
-    Evita sobrecarga na API externa
-    """
+    """Middleware de rate limiting para API Lyceum"""
     
     def __init__(self, app, max_requests: int = 60, time_window: int = 60):
         super().__init__(app)
@@ -63,7 +47,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.request_counts = {}
         
     async def dispatch(self, request: Request, call_next):
-        # Aplicar rate limiting apenas para endpoints Lyceum
         path = request.url.path
         
         if any(path.startswith(p) for p in ["/api/v1/sync", "/api/v1/lyceum"]):
