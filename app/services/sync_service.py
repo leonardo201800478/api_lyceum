@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class SyncService:
-    """Serviço de sincronização com API Lyceum - APENAS LEITURA"""
+    """Servico de sincronizacao com API Lyceum - APENAS LEITURA"""
     
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -31,10 +31,10 @@ class SyncService:
         logger.info("SyncService inicializado (modo READ-ONLY para API Lyceum)")
     
     async def check_api_health(self) -> Dict[str, Any]:
-        """Verifica saúde da API Lyceum (GET apenas)"""
+        """Verifica saude da API Lyceum (GET apenas)"""
         return await self.api_client.health_check()
     
-    # Adicionar este método após o __init__:
+    # Adicionar este metodo apos o __init__:
     async def normalize_aluno_data(self, aluno_data: Dict) -> Dict:
         """Normaliza dados do aluno da API para o modelo local"""
         normalized = {}
@@ -99,7 +99,7 @@ class SyncService:
         try:
             # Tenta converter timestamp (milissegundos)
             if isinstance(value, (int, float)):
-                if value > 1000000000000:  # Está em milissegundos
+                if value > 1000000000000:  # Esta em milissegundos
                     value = value / 1000
                 return datetime.fromtimestamp(value)
             # Tenta parsear string
@@ -120,9 +120,9 @@ class SyncService:
             incremental: Se True, apenas sincroniza registros alterados
             
         Returns:
-            Dict com estatísticas da sincronização
+            Dict com estatisticas da sincronizacao
         """
-        logger.info(f"Iniciando sincronização de alunos (incremental={incremental})")
+        logger.info(f"Iniciando sincronizacao de alunos (incremental={incremental})")
         
         stats = {
             "total_api": 0,
@@ -134,7 +134,7 @@ class SyncService:
         }
         
         try:
-            # Obtém alunos da API
+            # Obtem alunos da API
             alunos_api = await self.api_client.get_all_alunos()
             stats["total_api"] = len(alunos_api)
             
@@ -142,7 +142,7 @@ class SyncService:
                 logger.warning("Nenhum aluno obtido da API")
                 return stats
             
-            # Para incremental, obtém stamps existentes
+            # Para incremental, obtem stamps existentes
             existing_stamps = {}
             if incremental:
                 result = await self.db.execute(
@@ -176,7 +176,7 @@ class SyncService:
                     # Normaliza dados
                     aluno_normalizado = await self.normalize_aluno_data(aluno_data)
                     
-                    # Verifica se já existe
+                    # Verifica se ja existe
                     existing = await self.db.execute(
                         select(LYAluno).where(LYAluno.aluno == matricula)
                     )
@@ -202,14 +202,14 @@ class SyncService:
                     stats["erros"] += 1
                     logger.error(f"Erro processando aluno {i}: {e}")
             
-            # Commit das alterações
+            # Commit das alteracoes
             await self.db.commit()
             
-            logger.info("Sincronização concluída com sucesso")
+            logger.info("Sincronizacao concluida com sucesso")
             
         except Exception as e:
             await self.db.rollback()
-            logger.error(f"Erro na sincronização: {e}")
+            logger.error(f"Erro na sincronizacao: {e}")
             stats["erros"] += 1
         
         stats["concluido_em"] = datetime.now()

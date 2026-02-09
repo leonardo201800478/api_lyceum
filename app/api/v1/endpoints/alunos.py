@@ -14,25 +14,25 @@ router = APIRouter()
 @router.get("/", response_model=AlunoListResponse)
 async def read_alunos(
     db: AsyncSession = Depends(get_db),
-    page: int = Query(1, ge=1, description="Número da página"),
-    size: int = Query(50, ge=1, le=100, description="Tamanho da página"),
-    search: Optional[str] = Query(None, description="Buscar por nome ou matrícula"),
+    page: int = Query(1, ge=1, description="Numero da pagina"),
+    size: int = Query(50, ge=1, le=100, description="Tamanho da pagina"),
+    search: Optional[str] = Query(None, description="Buscar por nome ou matricula"),
     curso: Optional[str] = Query(None, description="Filtrar por curso"),
-    serie: Optional[int] = Query(None, ge=1, le=10, description="Filtrar por série"),
+    serie: Optional[int] = Query(None, ge=1, le=10, description="Filtrar por serie"),
     order_by: Optional[str] = Query(
         None,
         description="Ordenar por campo (prefixo '-' para descendente)"
     ),
 ):
     """
-    Listar alunos com paginação e filtros
+    Listar alunos com paginacao e filtros
     
-    - **page**: Número da página (padrão: 1)
-    - **size**: Tamanho da página (padrão: 50, máximo: 100)
-    - **search**: Buscar por nome, matrícula ou email
+    - **page**: Numero da pagina (padrao: 1)
+    - **size**: Tamanho da pagina (padrao: 50, maximo: 100)
+    - **search**: Buscar por nome, matricula ou email
     - **curso**: Filtrar por curso
-    - **serie**: Filtrar por série
-    - **order_by**: Campo para ordenação (ex: 'nome', '-curso', 'serie')
+    - **serie**: Filtrar por serie
+    - **order_by**: Campo para ordenacao (ex: 'nome', '-curso', 'serie')
     """
     try:
         result = await crud_aluno.get_paginated(
@@ -59,15 +59,15 @@ async def read_aluno(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Obter detalhes de um aluno específico
+    Obter detalhes de um aluno especifico
     
-    - **aluno_id**: Matrícula do aluno
+    - **aluno_id**: Matricula do aluno
     """
     aluno = await crud_aluno.get(db, aluno_id=aluno_id)
     if not aluno:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aluno não encontrado"
+            detail="Aluno nao encontrado"
         )
     return aluno
 
@@ -80,7 +80,7 @@ async def check_aluno_exists(
     """
     Verificar se um aluno existe
     
-    - **aluno_id**: Matrícula do aluno
+    - **aluno_id**: Matricula do aluno
     """
     aluno = await crud_aluno.get(db, aluno_id=aluno_id)
     return {"exists": aluno is not None}
@@ -90,15 +90,15 @@ async def check_aluno_exists(
 async def get_alunos_stats(
     db: AsyncSession = Depends(get_db),
 ):
-    """Obter estatísticas dos alunos"""
+    """Obter estatisticas dos alunos"""
     try:
         stats = await crud_aluno.get_stats(db)
         return stats
     except Exception as e:
-        logger.error(f"Erro ao obter estatísticas: {e}")
+        logger.error(f"Erro ao obter estatisticas: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro interno ao obter estatísticas"
+            detail="Erro interno ao obter estatisticas"
         )
 
 
@@ -106,15 +106,15 @@ async def get_alunos_stats(
 async def read_alunos_by_curso(
     curso_name: str,
     db: AsyncSession = Depends(get_db),
-    skip: int = Query(0, ge=0, description="Número de registros para pular"),
-    limit: int = Query(100, ge=1, le=500, description="Número máximo de registros"),
+    skip: int = Query(0, ge=0, description="Numero de registros para pular"),
+    limit: int = Query(100, ge=1, le=500, description="Numero maximo de registros"),
 ):
     """
     Listar alunos por curso
     
     - **curso_name**: Nome do curso
-    - **skip**: Número de registros para pular (padrão: 0)
-    - **limit**: Número máximo de registros (padrão: 100, máximo: 500)
+    - **skip**: Numero de registros para pular (padrao: 0)
+    - **limit**: Numero maximo de registros (padrao: 100, maximo: 500)
     """
     alunos = await crud_aluno.get_multi(
         db,
@@ -130,15 +130,15 @@ async def read_alunos_by_curso(
 async def read_alunos_by_serie(
     serie_number: int,
     db: AsyncSession = Depends(get_db),
-    skip: int = Query(0, ge=0, description="Número de registros para pular"),
-    limit: int = Query(100, ge=1, le=500, description="Número máximo de registros"),
+    skip: int = Query(0, ge=0, description="Numero de registros para pular"),
+    limit: int = Query(100, ge=1, le=500, description="Numero maximo de registros"),
 ):
     """
-    Listar alunos por série
+    Listar alunos por serie
     
-    - **serie_number**: Número da série
-    - **skip**: Número de registros para pular (padrão: 0)
-    - **limit**: Número máximo de registros (padrão: 100, máximo: 500)
+    - **serie_number**: Numero da serie
+    - **skip**: Numero de registros para pular (padrao: 0)
+    - **limit**: Numero maximo de registros (padrao: 100, maximo: 500)
     """
     alunos = await crud_aluno.get_multi(
         db,

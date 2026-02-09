@@ -6,31 +6,31 @@ logger = logging.getLogger(__name__)
 
 
 class APISecurity:
-    """Classe para validações de segurança da API"""
+    """Classe para validacoes de seguranca da API"""
     
     @staticmethod
     def validate_lyceum_request(method: str, endpoint: str) -> bool:
         """
-        Valida se uma requisição para API Lyceum é permitida
+        Valida se uma requisicao para API Lyceum e permitida
         
         Args:
-            method: Método HTTP (GET, POST, PUT, DELETE, etc.)
+            method: Metodo HTTP (GET, POST, PUT, DELETE, etc.)
             endpoint: Endpoint da API
             
         Returns:
-            True se permitido, False caso contrário
+            True se permitido, False caso contrario
             
         Raises:
-            HTTPException: Se método não for GET
+            HTTPException: Se metodo nao for GET
         """
         method = method.upper()
         
-        # APENAS GET é permitido para API Lyceum
+        # APENAS GET e permitido para API Lyceum
         if method != "GET":
-            logger.error(f"Tentativa de uso de método {method} na API Lyceum (não permitido)")
+            logger.error(f"Tentativa de uso de metodo {method} na API Lyceum (nao permitido)")
             raise HTTPException(
                 status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
-                detail=f"Método {method} não é permitido para API Lyceum (apenas GET)"
+                detail=f"Metodo {method} nao e permitido para API Lyceum (apenas GET)"
             )
         
         # Validar endpoint (opcional - lista de endpoints permitidos)
@@ -47,10 +47,10 @@ class APISecurity:
             "/v2/tabela/turma-docente",
         ]
         
-        # Verificar se endpoint começa com algum permitido
+        # Verificar se endpoint comeca com algum permitido
         if not any(endpoint.startswith(allowed) for allowed in allowed_endpoints):
-            logger.warning(f"Endpoint não reconhecido: {endpoint}")
-            # Não bloqueia, apenas loga warning
+            logger.warning(f"Endpoint nao reconhecido: {endpoint}")
+            # Nao bloqueia, apenas loga warning
         
         return True
     
@@ -71,16 +71,16 @@ class APISecurity:
     @staticmethod
     def validate_api_credentials(config: Dict[str, Any]) -> bool:
         """
-        Valida se as credenciais da API Lyceum estão configuradas
+        Valida se as credenciais da API Lyceum estao configuradas
         
         Args:
-            config: Configurações da aplicação
+            config: Configuracoes da aplicacao
             
         Returns:
-            True se credenciais válidas
+            True se credenciais validas
             
         Raises:
-            HTTPException: Se credenciais não estiverem configuradas
+            HTTPException: Se credenciais nao estiverem configuradas
         """
         required_fields = [
             "LYCEUM_API_BASE_URL",
@@ -96,10 +96,10 @@ class APISecurity:
                 missing_fields.append(field)
         
         if missing_fields:
-            logger.error(f"Credenciais da API Lyceum não configuradas: {missing_fields}")
+            logger.error(f"Credenciais da API Lyceum nao configuradas: {missing_fields}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Credenciais da API Lyceum não configuradas: {', '.join(missing_fields)}"
+                detail=f"Credenciais da API Lyceum nao configuradas: {', '.join(missing_fields)}"
             )
         
         return True

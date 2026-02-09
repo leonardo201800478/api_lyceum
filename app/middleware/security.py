@@ -8,7 +8,7 @@ import asyncio  # ADICIONADO
 logger = logging.getLogger(__name__)
 
 class LyceumAPISecurityMiddleware(BaseHTTPMiddleware):
-    """Middleware para validar requisições para API Lyceum"""
+    """Middleware para validar requisicoes para API Lyceum"""
     
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
@@ -24,14 +24,14 @@ class LyceumAPISecurityMiddleware(BaseHTTPMiddleware):
         )
         
         if is_lyceum_endpoint:
-            logger.info(f"Requisição para endpoint Lyceum: {request.method} {path}")
+            logger.info(f"Requisicao para endpoint Lyceum: {request.method} {path}")
             
             if request.method.upper() not in ["GET", "POST"]:
                 if request.method.upper() != "POST" or not path.endswith("/sync"):
-                    logger.error(f"Método {request.method} não permitido para {path}")
+                    logger.error(f"Metodo {request.method} nao permitido para {path}")
                     raise HTTPException(
                         status_code=405,
-                        detail=f"Método {request.method} não permitido"
+                        detail=f"Metodo {request.method} nao permitido"
                     )
         
         response = await call_next(request)
@@ -71,7 +71,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     logger.warning(f"Rate limit excedido para IP: {client_ip}")
                     raise HTTPException(
                         status_code=429,
-                        detail="Muitas requisições para API Lyceum. Tente novamente mais tarde."
+                        detail="Muitas requisicoes para API Lyceum. Tente novamente mais tarde."
                     )
                 
                 self.request_counts[client_ip] = (count + 1, timestamp)

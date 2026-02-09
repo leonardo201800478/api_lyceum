@@ -17,46 +17,46 @@ async def sync_alunos(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Iniciar sincronização de alunos
+    Iniciar sincronizacao de alunos
     
     - **incremental**: Se True, sincroniza apenas registros alterados
     """
     try:
         sync_service = SyncService(db)
         
-        # Executa sincronização em background
+        # Executa sincronizacao em background
         async def run_sync():
             try:
                 stats = await sync_service.sync_alunos(incremental=incremental)
-                logger.info(f"Sincronização concluída: {stats}")
+                logger.info(f"Sincronizacao concluida: {stats}")
             except Exception as e:
-                logger.error(f"Erro na sincronização em background: {e}")
+                logger.error(f"Erro na sincronizacao em background: {e}")
         
         # Adiciona tarefa em background
         background_tasks.add_task(run_sync)
         
         return {
-            "message": "Sincronização iniciada em background",
+            "message": "Sincronizacao iniciada em background",
             "incremental": incremental,
             "started_at": datetime.now().isoformat(),
         }
     except Exception as e:
-        logger.error(f"Erro ao iniciar sincronização: {e}")
+        logger.error(f"Erro ao iniciar sincronizacao: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao iniciar sincronização: {str(e)}"
+            detail=f"Erro ao iniciar sincronizacao: {str(e)}"
         )
 
 
 @router.get("/status", response_model=dict)
 async def get_sync_status():
     """
-    Obter status da última sincronização
+    Obter status da ultima sincronizacao
     
-    Nota: Em produção, implementar tracking de jobs
+    Nota: Em producao, implementar tracking de jobs
     """
     return {
         "status": "not_implemented",
-        "message": "Status tracking não implementado nesta versão",
-        "suggestion": "Verifique os logs para informações de sincronização",
+        "message": "Status tracking nao implementado nesta versao",
+        "suggestion": "Verifique os logs para informacoes de sincronizacao",
     }

@@ -42,18 +42,18 @@ async def paginate_query(
     Pagina uma query SQLAlchemy
     
     Args:
-        session: Sessão do banco de dados
+        session: Sessao do banco de dados
         query: Query SQLAlchemy
-        page: Número da página (1-indexed)
-        size: Tamanho da página
-        max_size: Tamanho máximo permitido
+        page: Numero da pagina (1-indexed)
+        size: Tamanho da pagina
+        max_size: Tamanho maximo permitido
         
     Returns:
         PaginatedResponse: Resultado paginado
     """
     from sqlalchemy import func
     
-    # Validação de parâmetros
+    # Validacao de parâmetros
     if page < 1:
         page = 1
     if size < 1:
@@ -66,7 +66,7 @@ async def paginate_query(
     total_result = await session.execute(count_query)
     total = total_result.scalar()
     
-    # Aplica paginação
+    # Aplica paginacao
     offset = (page - 1) * size
     paginated_query = query.offset(offset).limit(size)
     

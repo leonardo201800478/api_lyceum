@@ -7,15 +7,15 @@ client = TestClient(app)
 
 
 def test_lyceum_api_read_only_mode():
-    """Testa se a API está em modo read-only"""
+    """Testa se a API esta em modo read-only"""
     response = client.get("/")
     assert response.status_code == 200
     assert "READ-ONLY" in response.text
-    assert "Apenas requisições GET" in response.text
+    assert "Apenas requisicoes GET" in response.text
 
 
 def test_lyceum_health_endpoint():
-    """Testa o endpoint de saúde da API Lyceum"""
+    """Testa o endpoint de saude da API Lyceum"""
     with patch('app.api.v1.endpoints.security.LyceumAPIClientReadOnly') as mock_client:
         mock_instance = MagicMock()
         mock_instance.health_check.return_value = {
@@ -33,7 +33,7 @@ def test_lyceum_health_endpoint():
 
 
 def test_security_status_endpoint():
-    """Testa o endpoint de status de segurança"""
+    """Testa o endpoint de status de seguranca"""
     response = client.get("/api/v1/security/status")
     
     assert response.status_code == 200
@@ -45,7 +45,7 @@ def test_security_status_endpoint():
 
 
 def test_lyceum_endpoints_list():
-    """Testa a lista de endpoints Lyceum disponíveis"""
+    """Testa a lista de endpoints Lyceum disponiveis"""
     response = client.get("/api/v1/security/lyceum/endpoints")
     
     assert response.status_code == 200
@@ -57,25 +57,25 @@ def test_lyceum_endpoints_list():
 
 @pytest.mark.parametrize("method", ["POST", "PUT", "DELETE", "PATCH"])
 def test_blocked_methods_for_lyceum(method):
-    """Testa se métodos não-GET são bloqueados"""
-    # Simula uma tentativa de usar método não permitido
+    """Testa se metodos nao-GET sao bloqueados"""
+    # Simula uma tentativa de usar metodo nao permitido
     # (O middleware deve bloquear)
     
-    # Para POST no endpoint de sync é permitido
+    # Para POST no endpoint de sync e permitido
     if method == "POST":
         response = client.request(method, "/api/v1/sync/alunos")
-        # POST é permitido apenas para iniciar sync
+        # POST e permitido apenas para iniciar sync
         assert response.status_code in [200, 405]
     else:
-        # Outros métodos não são permitidos em nenhum endpoint Lyceum
+        # Outros metodos nao sao permitidos em nenhum endpoint Lyceum
         response = client.request(method, "/api/v1/sync/alunos")
         assert response.status_code == 405  # Method Not Allowed
 
 
 def test_rate_limiting():
-    """Testa se rate limiting está funcionando"""
-    # Este teste seria mais complexo em produção
-    # Aqui apenas verificamos se a configuração existe
+    """Testa se rate limiting esta funcionando"""
+    # Este teste seria mais complexo em producao
+    # Aqui apenas verificamos se a configuracao existe
     response = client.get("/api/v1/security/status")
     data = response.json()
     

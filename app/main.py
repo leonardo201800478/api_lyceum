@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Lifespan manager para eventos de startup/shutdown"""
     logger.info("🚀 Iniciando API Lyceum Sync (MODO READ-ONLY)")
-    logger.info("⚠  AVISO: Apenas métodos GET são permitidos para API Lyceum")
+    logger.info("⚠  AVISO: Apenas metodos GET sao permitidos para API Lyceum")
     yield
     logger.info("🛑 Encerrando API Lyceum Sync")
 
 
-# Criar aplicação FastAPI
+# Criar aplicacao FastAPI
 app = FastAPI(
     title=settings.PROJECT_NAME + " (READ-ONLY)",
     version=settings.APP_VERSION,
@@ -35,20 +35,20 @@ app = FastAPI(
     
     **IMPORTANTE:** Esta API opera em modo READ-ONLY para a API Lyceum externa.
     
-    ### Restrições de Segurança:
-    - ✅ Apenas requisições GET são permitidas para API Lyceum
-    - ❌ Métodos POST, PUT, DELETE são bloqueados
+    ### Restricoes de Seguranca:
+    - ✅ Apenas requisicoes GET sao permitidas para API Lyceum
+    - ❌ Metodos POST, PUT, DELETE sao bloqueados
     - ✅ Rate limiting para evitar sobrecarga
-    - ✅ Validação de credenciais
+    - ✅ Validacao de credenciais
     
-    ### Endpoints Disponíveis:
+    ### Endpoints Disponiveis:
     - `/api/v1/alunos` - Consulta alunos sincronizados
-    - `/api/v1/sync/alunos` - Inicia sincronização (usa apenas GET na API Lyceum)
-    - `/api/v1/health` - Verifica saúde do sistema
+    - `/api/v1/sync/alunos` - Inicia sincronizacao (usa apenas GET na API Lyceum)
+    - `/api/v1/health` - Verifica saude do sistema
     """,
 )
 
-# Adicionar middlewares de segurança
+# Adicionar middlewares de seguranca
 app.add_middleware(LyceumAPISecurityMiddleware)
 app.add_middleware(RateLimitMiddleware)
 
@@ -77,16 +77,16 @@ def custom_openapi():
         routes=app.routes,
     )
     
-    # Adicionar nota de segurança
+    # Adicionar nota de seguranca
     openapi_schema["info"]["x-security-note"] = "API Lyceum operates in READ-ONLY mode. Only GET methods are allowed for external API calls."
     
-    # Adicionar tags de segurança
+    # Adicionar tags de seguranca
     if "tags" not in openapi_schema:
         openapi_schema["tags"] = []
     
     openapi_schema["tags"].append({
         "name": "security",
-        "description": "Endpoints relacionados à segurança e validações"
+        "description": "Endpoints relacionados à seguranca e validacoes"
     })
     
     app.openapi_schema = openapi_schema
@@ -98,16 +98,16 @@ app.openapi = custom_openapi
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def root():
-    """Página inicial com informações de segurança"""
+    """Pagina inicial com informacoes de seguranca"""
     security_html = """
     <div class="security-note">
         <h3>🔒 Modo Read-Only</h3>
         <p>Esta API opera em modo <strong>READ-ONLY</strong> para a API Lyceum.</p>
         <ul>
-            <li>✅ Apenas requisições GET são permitidas</li>
-            <li>❌ POST, PUT, DELETE são bloqueados</li>
+            <li>✅ Apenas requisicoes GET sao permitidas</li>
+            <li>❌ POST, PUT, DELETE sao bloqueados</li>
             <li>✅ Rate limiting ativo</li>
-            <li>✅ Validação de credenciais</li>
+            <li>✅ Validacao de credenciais</li>
         </ul>
     </div>
     """
@@ -184,8 +184,8 @@ async def root():
         <body>
             <div class="container">
                 <h1>🔒 API Lyceum Sync (READ-ONLY)</h1>
-                <p>Sistema de sincronização de dados acadêmicos do Lyceum</p>
-                <p><strong>Versão:</strong> {settings.APP_VERSION}</p>
+                <p>Sistema de sincronizacao de dados acadêmicos do Lyceum</p>
+                <p><strong>Versao:</strong> {settings.APP_VERSION}</p>
                 <p><strong>Ambiente:</strong> {settings.ENVIRONMENT}</p>
                 <p class="warning">⚠ MODE: READ-ONLY (Apenas GET para API Lyceum)</p>
                 

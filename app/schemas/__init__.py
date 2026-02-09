@@ -16,4 +16,4 @@ __all__ = [
     "AlunoResponse",
     "AlunoFull",
 ]
-# Remover "PaginatedResponse" - não está definido em aluno.py
+# Remover "PaginatedResponse" - nao esta definido em aluno.py

@@ -13,11 +13,11 @@ router = APIRouter()
 @router.get("/lyceum/health")
 async def check_lyceum_api_health():
     """
-    Verifica a saúde da API Lyceum externa
+    Verifica a saude da API Lyceum externa
     
-    - Realiza uma requisição GET simples
-    - Verifica se as credenciais estão configuradas
-    - Retorna status da conexão
+    - Realiza uma requisicao GET simples
+    - Verifica se as credenciais estao configuradas
+    - Retorna status da conexao
     """
     try:
         client = LyceumAPIClientReadOnly()
@@ -30,7 +30,7 @@ async def check_lyceum_api_health():
             "LYCEUM_API_PASSWORD": settings.LYCEUM_API_PASSWORD,
         })
         
-        # Verificar saúde
+        # Verificar saude
         health_status = await client.health_check()
         
         return {
@@ -43,7 +43,7 @@ async def check_lyceum_api_health():
     except HTTPException as e:
         raise e
     except Exception as e:
-        logger.error(f"Erro ao verificar saúde da API Lyceum: {e}")
+        logger.error(f"Erro ao verificar saude da API Lyceum: {e}")
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao verificar API Lyceum: {str(e)}"
@@ -53,7 +53,7 @@ async def check_lyceum_api_health():
 @router.get("/lyceum/endpoints")
 async def list_lyceum_endpoints():
     """
-    Lista os endpoints Lyceum disponíveis (apenas GET)
+    Lista os endpoints Lyceum disponiveis (apenas GET)
     
     Retorna todos os endpoints que podem ser consultados
     no modo read-only
@@ -62,7 +62,7 @@ async def list_lyceum_endpoints():
     
     return {
         "available_endpoints": list(client.GET_ENDPOINTS.keys()),
-        "security_note": "Todos os endpoints são acessíveis apenas via GET",
+        "security_note": "Todos os endpoints sao acessiveis apenas via GET",
         "rate_limits": APISecurity.get_lyceum_rate_limits()
     }
 
@@ -70,9 +70,9 @@ async def list_lyceum_endpoints():
 @router.get("/security/status")
 async def get_security_status():
     """
-    Retorna o status de segurança atual
+    Retorna o status de seguranca atual
     
-    Mostra configurações de segurança ativas para API Lyceum
+    Mostra configuracoes de seguranca ativas para API Lyceum
     """
     return {
         "lyceum_api_mode": "read_only",

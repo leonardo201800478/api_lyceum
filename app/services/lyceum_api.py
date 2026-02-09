@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class LyceumAPIClient:
-    """Cliente assíncrono para API Lyceum - APENAS GET"""
+    """Cliente assincrono para API Lyceum - APENAS GET"""
     
     def __init__(self):
         self.base_url = settings.LYCEUM_API_BASE_URL.rstrip("/")
@@ -26,7 +26,7 @@ class LyceumAPIClient:
         params: Optional[Dict] = None
     ) -> Optional[Dict]:
         """
-        Faz uma requisição HTTP GET APENAS
+        Faz uma requisicao HTTP GET APENAS
         
         Args:
             endpoint: Endpoint da API
@@ -50,9 +50,9 @@ class LyceumAPIClient:
                 if response.status_code != 200:
                     logger.error(f"HTTP {response.status_code} → {url}")
                     if response.status_code == 401:
-                        logger.error("❌ Credenciais inválidas para API Lyceum")
+                        logger.error("❌ Credenciais invalidas para API Lyceum")
                     elif response.status_code == 404:
-                        logger.error(f"❌ Endpoint não encontrado: {endpoint}")
+                        logger.error(f"❌ Endpoint nao encontrado: {endpoint}")
                     else:
                         logger.error(f"❌ Resposta: {response.text[:200]}...")
                     return None
@@ -60,10 +60,10 @@ class LyceumAPIClient:
                 return response.json()
                 
             except httpx.TimeoutException:
-                logger.error(f"⏱️ Timeout na requisição GET → {url}")
+                logger.error(f"⏱️ Timeout na requisicao GET → {url}")
                 return None
             except httpx.RequestError as e:
-                logger.error(f"❌ Erro na requisição GET → {url}: {e}")
+                logger.error(f"❌ Erro na requisicao GET → {url}: {e}")
                 return None
     
     async def get_paginated_data(
@@ -73,12 +73,12 @@ class LyceumAPIClient:
         page_start: int = 0
     ) -> List[Dict]:
         """
-        Obtém TODOS os dados de um endpoint paginado
+        Obtem TODOS os dados de um endpoint paginado
         
         Args:
             endpoint: Endpoint da API (ex: "/v2/tabela/alunos")
-            custom_params: Parâmetros adicionais para a requisição
-            page_start: Página inicial (padrão: 0)
+            custom_params: Parâmetros adicionais para a requisicao
+            page_start: Pagina inicial (padrao: 0)
             
         Returns:
             Lista com todos os dados obtidos
@@ -86,10 +86,10 @@ class LyceumAPIClient:
         all_data = []
         page = page_start
         
-        logger.info(f"🔄 Iniciando paginação em {endpoint}")
+        logger.info(f"🔄 Iniciando paginacao em {endpoint}")
         
         while True:
-            # Parâmetros base para paginação
+            # Parâmetros base para paginacao
             params = {
                 "page": page,
                 "size": self.page_size
@@ -99,13 +99,13 @@ class LyceumAPIClient:
             if custom_params:
                 params.update(custom_params)
             
-            logger.info(f"📄 Buscando página {page} (size={self.page_size})...")
+            logger.info(f"📄 Buscando pagina {page} (size={self.page_size})...")
             
             data = await self._make_get_request(endpoint, params=params)
             
             # Verificar se houve erro
             if data is None:
-                logger.warning(f"⚠️ Página {page} retornou None, interrompendo paginação")
+                logger.warning(f"⚠️ Pagina {page} retornou None, interrompendo paginacao")
                 break
             
             # Processar resposta baseada no formato esperado
@@ -115,7 +115,7 @@ class LyceumAPIClient:
             if isinstance(data, dict) and 'data' in data:
                 items = data['data']
                 if not isinstance(items, list):
-                    logger.error(f"❌ 'data' não é uma lista: {type(items)}")
+                    logger.error(f"❌ 'data' nao e uma lista: {type(items)}")
                     break
             
             # Formato 2: lista direta
@@ -125,29 +125,29 @@ class LyceumAPIClient:
             # Formato desconhecido
             else:
                 logger.error(f"❌ Formato de resposta inesperado: {type(data)}")
-                logger.debug(f"Conteúdo: {str(data)[:200]}...")
+                logger.debug(f"Conteudo: {str(data)[:200]}...")
                 break
             
-            # Verificar se a página está vazia (fim da paginação)
+            # Verificar se a pagina esta vazia (fim da paginacao)
             if len(items) == 0:
-                logger.info(f"✅ Página {page} vazia - fim da paginação")
+                logger.info(f"✅ Pagina {page} vazia - fim da paginacao")
                 break
             
             # Adicionar itens ao resultado
             all_data.extend(items)
-            logger.info(f"📊 Página {page}: {len(items)} registros (total: {len(all_data)})")
+            logger.info(f"📊 Pagina {page}: {len(items)} registros (total: {len(all_data)})")
             
-            # Incrementar página
+            # Incrementar pagina
             page += 1
             
-            # Delay para não sobrecarregar a API
+            # Delay para nao sobrecarregar a API
             await asyncio.sleep(self.delay)
         
-        logger.info(f"🎉 Paginação completa: {len(all_data)} registros obtidos")
+        logger.info(f"🎉 Paginacao completa: {len(all_data)} registros obtidos")
         return all_data
     
     async def get_alunos_paginated(self, page: int = 0) -> Optional[Dict]:
-        """Obtém uma página específica de alunos da API"""
+        """Obtem uma pagina especifica de alunos da API"""
         params = {
             "page": page,
             "size": self.page_size
@@ -155,11 +155,11 @@ class LyceumAPIClient:
         return await self._make_get_request("/v2/tabela/alunos", params=params)
     
     async def get_all_alunos(self) -> List[Dict]:
-        """Obtém TODOS os alunos paginando automaticamente"""
+        """Obtem TODOS os alunos paginando automaticamente"""
         return await self.get_paginated_data("/v2/tabela/alunos")
     
     async def get_aluno_by_matricula(self, matricula: str) -> Optional[Dict]:
-        """Obtém um aluno específico por matrícula"""
+        """Obtem um aluno especifico por matricula"""
         params = {"pk[aluno]": matricula}
         data = await self.get_paginated_data("/v2/tabela/alunos", custom_params=params)
         
@@ -168,13 +168,13 @@ class LyceumAPIClient:
         
         return None
     
-    # Métodos para outras entidades (com paginação completa)
+    # Metodos para outras entidades (com paginacao completa)
     async def get_all_cursos(self) -> List[Dict]:
-        """Obtém TODOS os cursos"""
+        """Obtem TODOS os cursos"""
         return await self.get_paginated_data("/v2/tabela/cursos")
     
     async def get_all_disciplinas(self) -> List[Dict]:
-        """Obtém TODAS as disciplinas"""
+        """Obtem TODAS as disciplinas"""
         return await self.get_paginated_data("/v2/tabela/disciplinas")
     
     async def get_all_turmas(
@@ -182,7 +182,7 @@ class LyceumAPIClient:
         ano: Optional[int] = None, 
         semestre: Optional[int] = None
     ) -> List[Dict]:
-        """Obtém TODAS as turmas com filtros opcionais"""
+        """Obtem TODAS as turmas com filtros opcionais"""
         params = {}
         if ano is not None:
             params["ano"] = ano
@@ -192,7 +192,7 @@ class LyceumAPIClient:
         return await self.get_paginated_data("/v2/tabela/turmas", custom_params=params)
     
     async def get_all_docentes(self) -> List[Dict]:
-        """Obtém TODOS os docentes"""
+        """Obtem TODOS os docentes"""
         return await self.get_paginated_data("/v2/tabela/docente")
     
     async def get_all_matriculas(
@@ -200,7 +200,7 @@ class LyceumAPIClient:
         ano: Optional[int] = None,
         semestre: Optional[int] = None
     ) -> List[Dict]:
-        """Obtém TODAS as matrículas com filtros opcionais"""
+        """Obtem TODAS as matriculas com filtros opcionais"""
         params = {}
         if ano is not None:
             params["ano"] = ano
@@ -210,11 +210,11 @@ class LyceumAPIClient:
         return await self.get_paginated_data("/v2/tabela/matriculas", custom_params=params)
     
     async def get_all_curriculos(self) -> List[Dict]:
-        """Obtém TODOS os currículos"""
+        """Obtem TODOS os curriculos"""
         return await self.get_paginated_data("/v2/tabela/curriculos")
     
     async def get_all_grades(self) -> List[Dict]:
-        """Obtém TODAS as grades"""
+        """Obtem TODAS as grades"""
         return await self.get_paginated_data("/v2/tabela/grades")
     
     async def get_all_coordenacao(
@@ -222,7 +222,7 @@ class LyceumAPIClient:
         ano: Optional[int] = None,
         semestre: Optional[int] = None
     ) -> List[Dict]:
-        """Obtém TODAS as coordenações com filtros opcionais"""
+        """Obtem TODAS as coordenacoes com filtros opcionais"""
         params = {}
         if ano is not None:
             params["ano"] = ano
@@ -236,7 +236,7 @@ class LyceumAPIClient:
         ano: Optional[int] = None,
         semestre: Optional[int] = None
     ) -> List[Dict]:
-        """Obtém TODAS as turma-docente com filtros opcionais"""
+        """Obtem TODAS as turma-docente com filtros opcionais"""
         params = {}
         if ano is not None:
             params["ano"] = ano
@@ -245,42 +245,42 @@ class LyceumAPIClient:
         
         return await self.get_paginated_data("/v2/tabela/turma-docente", custom_params=params)
     
-    # Métodos para obter UMA página (mantidos para compatibilidade)
+    # Metodos para obter UMA pagina (mantidos para compatibilidade)
     async def get_cursos_page(self, page: int = 0) -> Optional[Dict]:
-        """Obtém UMA página de cursos"""
+        """Obtem UMA pagina de cursos"""
         params = {"page": page, "size": self.page_size}
         return await self._make_get_request("/v2/tabela/cursos", params=params)
     
     async def get_disciplinas_page(self, page: int = 0) -> Optional[Dict]:
-        """Obtém UMA página de disciplinas"""
+        """Obtem UMA pagina de disciplinas"""
         params = {"page": page, "size": self.page_size}
         return await self._make_get_request("/v2/tabela/disciplinas", params=params)
     
     async def get_turmas_page(self, page: int = 0) -> Optional[Dict]:
-        """Obtém UMA página de turmas"""
+        """Obtem UMA pagina de turmas"""
         params = {"page": page, "size": self.page_size}
         return await self._make_get_request("/v2/tabela/turmas", params=params)
     
     async def get_docentes_page(self, page: int = 0) -> Optional[Dict]:
-        """Obtém UMA página de docentes"""
+        """Obtem UMA pagina de docentes"""
         params = {"page": page, "size": self.page_size}
         return await self._make_get_request("/v2/tabela/docente", params=params)
     
     async def get_matriculas_page(self, page: int = 0) -> Optional[Dict]:
-        """Obtém UMA página de matrículas"""
+        """Obtem UMA pagina de matriculas"""
         params = {"page": page, "size": self.page_size}
         return await self._make_get_request("/v2/tabela/matriculas", params=params)
     
-    # Método de verificação de saúde da API Lyceum
+    # Metodo de verificacao de saude da API Lyceum
     async def health_check(self) -> Dict[str, Any]:
         """
-        Verifica se a API Lyceum está respondendo
+        Verifica se a API Lyceum esta respondendo
         
         Returns:
             Dict com status da API Lyceum
         """
         try:
-            # Tenta uma requisição simples para a página 0
+            # Tenta uma requisicao simples para a pagina 0
             data = await self._make_get_request(
                 "/v2/tabela/alunos", 
                 params={"page": 0, "size": 1}
@@ -297,7 +297,7 @@ class LyceumAPIClient:
             else:
                 return {
                     "status": "offline",
-                    "message": "API Lyceum não respondeu",
+                    "message": "API Lyceum nao respondeu",
                     "timestamp": asyncio.get_event_loop().time()
                 }
                 
@@ -311,24 +311,24 @@ class LyceumAPIClient:
 
 class LyceumAPIClientReadOnly(LyceumAPIClient):
     """
-    Cliente Lyceum com validação explícita para garantir que é READ-ONLY
+    Cliente Lyceum com validacao explicita para garantir que e READ-ONLY
     
-    Esta classe herda do LyceumAPIClient mas adiciona verificações
-    explícitas para garantir que apenas GET seja usado
+    Esta classe herda do LyceumAPIClient mas adiciona verificacoes
+    explicitas para garantir que apenas GET seja usado
     """
     
     def __init__(self):
         super().__init__()
         logger.info("🔒 Cliente Lyceum READ-ONLY inicializado (apenas GET permitido)")
     
-    # Método genérico bloqueado para forçar uso apenas de métodos GET específicos
+    # Metodo generico bloqueado para forcar uso apenas de metodos GET especificos
     async def _make_request(self, method: str, **kwargs):
-        """Método bloqueado - usar apenas métodos GET específicos"""
+        """Metodo bloqueado - usar apenas metodos GET especificos"""
         raise NotImplementedError(
-            "❌ Este cliente é READ-ONLY. Use apenas métodos GET específicos."
+            "❌ Este cliente e READ-ONLY. Use apenas metodos GET especificos."
         )
     
-    # Dicionário de endpoints disponíveis
+    # Dicionario de endpoints disponiveis
     GET_ENDPOINTS = {
         "alunos": "/v2/tabela/alunos",
         "cursos": "/v2/tabela/cursos",
@@ -349,32 +349,32 @@ class LyceumAPIClientReadOnly(LyceumAPIClient):
         all_pages: bool = False
     ) -> Any:
         """
-        Método genérico para endpoints GET apenas
+        Metodo generico para endpoints GET apenas
         
         Args:
             endpoint_name: Nome do endpoint (deve estar em GET_ENDPOINTS)
             params: Parâmetros de query string
-            all_pages: Se True, obtém TODAS as páginas
+            all_pages: Se True, obtem TODAS as paginas
             
         Returns:
-            Dados da API (List[Dict] se all_pages=True, Dict se uma página)
+            Dados da API (List[Dict] se all_pages=True, Dict se uma pagina)
             
         Raises:
-            ValueError: Se endpoint_name não for válido
+            ValueError: Se endpoint_name nao for valido
         """
         if endpoint_name not in self.GET_ENDPOINTS:
             raise ValueError(
-                f"❌ Endpoint '{endpoint_name}' não é válido. "
-                f"Endpoints válidos: {list(self.GET_ENDPOINTS.keys())}"
+                f"❌ Endpoint '{endpoint_name}' nao e valido. "
+                f"Endpoints validos: {list(self.GET_ENDPOINTS.keys())}"
             )
         
         endpoint = self.GET_ENDPOINTS[endpoint_name]
         
         if all_pages:
-            # Obtém todas as páginas
+            # Obtem todas as paginas
             return await self.get_paginated_data(endpoint, custom_params=params)
         else:
-            # Obtém apenas uma página (padrão página 0)
+            # Obtem apenas uma pagina (padrao pagina 0)
             if params is None:
                 params = {"page": 0, "size": self.page_size}
             elif "page" not in params:

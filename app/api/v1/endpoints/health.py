@@ -12,15 +12,15 @@ router = APIRouter()
 async def health_check(
     db: AsyncSession = Depends(get_db)
 ):
-    """Health check da aplicação"""
-    # Verifica conexão com banco de dados
+    """Health check da aplicacao"""
+    # Verifica conexao com banco de dados
     db_status = "healthy"
     try:
         await db.execute(text("SELECT 1"))
     except Exception as e:
         db_status = f"unhealthy: {str(e)}"
     
-    # Informações do sistema
+    # Informacoes do sistema
     system_info = {
         "timestamp": datetime.now().isoformat(),
         "cpu_percent": psutil.cpu_percent(interval=1),

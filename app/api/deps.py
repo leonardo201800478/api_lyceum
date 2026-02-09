@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db, get_async_session
 
 
-# Para compatibilidade com código existente
+# Para compatibilidade com codigo existente
 async def get_database() -> AsyncGenerator[AsyncSession, None]:
     """
-    Dependency para obter sessão do banco (alias para get_db)
+    Dependency para obter sessao do banco (alias para get_db)
     
     Uso:
         @router.get("/")
@@ -19,5 +19,5 @@ async def get_database() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-# Exporta as mesmas funções
+# Exporta as mesmas funcoes
 __all__ = ['get_db', 'get_async_session', 'get_database']

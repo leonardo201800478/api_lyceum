@@ -1,5 +1,5 @@
 """
-Módulo core com funcionalidades principais
+Modulo core com funcionalidades principais
 """
 from .config import settings
 from .database import (
@@ -21,7 +21,7 @@ from .database import (
     # Base para modelos
     Base,
     
-    # Funções úteis
+    # Funcoes uteis
     check_database_connection,
     init_database,
     close_database_connections,

@@ -6,24 +6,24 @@ from app.utils.pagination import PaginatedResponse
 
 class AlunoBase(BaseModel):
     """Base schema para aluno"""
-    aluno: Optional[str] = Field(None, description="Matrícula do aluno")
+    aluno: Optional[str] = Field(None, description="Matricula do aluno")
     ano_ingresso: Optional[int] = Field(None, description="Ano de ingresso")
-    anoconcl2g: Optional[int] = Field(None, description="Ano conclusão 2º grau")
+    anoconcl2g: Optional[int] = Field(None, description="Ano conclusao 2º grau")
     nome_compl: Optional[str] = Field(None, description="Nome completo")
     nome_abrev: Optional[str] = Field(None, description="Nome abreviado")
     curso: Optional[str] = Field(None, description="Curso")
-    serie: Optional[int] = Field(None, description="Série")
+    serie: Optional[int] = Field(None, description="Serie")
     turno: Optional[str] = Field(None, description="Turno")
-    sit_aluno: Optional[str] = Field(None, description="Situação do aluno")
+    sit_aluno: Optional[str] = Field(None, description="Situacao do aluno")
 
 
 class AlunoCreate(AlunoBase):
-    """Schema para criação de aluno"""
-    aluno: str = Field(..., description="Matrícula do aluno (obrigatório)")
+    """Schema para criacao de aluno"""
+    aluno: str = Field(..., description="Matricula do aluno (obrigatorio)")
 
 
 class AlunoUpdate(BaseModel):
-    """Schema para atualização de aluno"""
+    """Schema para atualizacao de aluno"""
     ano_ingresso: Optional[int] = None
     anoconcl2g: Optional[int] = None
     nome_compl: Optional[str] = None
@@ -58,7 +58,7 @@ class AlunoListResponse(PaginatedResponse):
 # Schema completo com todos os campos
 class AlunoFull(BaseModel):
     """Schema completo com todos os campos do aluno"""
-    aluno: str = Field(..., description="Matrícula do aluno")
+    aluno: str = Field(..., description="Matricula do aluno")
     ano_ingresso: Optional[int] = None
     anoconcl2g: Optional[int] = None
     areacnpq: Optional[str] = None
