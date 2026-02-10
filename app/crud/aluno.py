@@ -1,3 +1,8 @@
+# app/crud/aluno.py
+from sqlalchemy.orm import Session
+from app.models.ly_aluno import LyAluno
+from app.schemas.aluno import AlunoCreate, AlunoUpdate
+from app.core.database import SessionLocal  # Importe SessionLocal em vez de engine
 from typing import List, Optional, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func, or_

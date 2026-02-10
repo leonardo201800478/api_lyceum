@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Script para iniciar a API Lyceum Sync usando apenas .env
 """
@@ -22,6 +21,7 @@ os.environ["PYTHONUTF8"] = "1"
 # Carrega variaveis do .env na raiz
 load_dotenv()
 
+
 def check_required_env_vars():
     """Verifica variaveis de ambiente obrigatorias"""
     required = [
@@ -37,11 +37,13 @@ def check_required_env_vars():
             missing.append(var)
     
     if missing:
-        print(f"❌ Variaveis de ambiente obrigatorias faltando: {', '.join(missing)}")
+        missing_vars = ', '.join(missing)
+        print(f"❌ Variaveis de ambiente obrigatorias faltando: {missing_vars}")
         print("   Configure-as no arquivo .env na raiz do projeto")
         return False
     
     return True
+
 
 def start_postgres():
     """Inicia PostgreSQL usando variaveis do .env"""
@@ -59,7 +61,10 @@ def start_postgres():
     # Verifica se ja esta rodando
     try:
         result = subprocess.run(
-            ["docker", "ps", "--filter", "name=lyceum-db", "--format", "{{.Names}}"],
+            [
+                "docker", "ps", "--filter", "name=lyceum-db",
+                "--format", "{{.Names}}"
+            ],
             capture_output=True,
             text=True,
             check=False
@@ -68,7 +73,8 @@ def start_postgres():
             print("✅ PostgreSQL ja esta rodando")
             return True
     except FileNotFoundError:
-        print("⚠️ Docker nao encontrado. Certifique-se de que o Docker esta instalado e rodando.")
+        print("⚠️ Docker nao encontrado. Certifique-se de que o"
+              " Docker esta instalado e rodando.")
         return False
     
     # Inicia container usando variaveis do .env
@@ -94,6 +100,7 @@ def start_postgres():
     except subprocess.CalledProcessError as e:
         print(f"❌ Erro ao iniciar PostgreSQL: {e}")
         return False
+    
 
 def create_tables():
     """Cria tabelas no banco"""
@@ -111,6 +118,7 @@ def create_tables():
         print(f"⚠️ Erro ao criar tabelas: {e}")
         print("⏳ Continuando...")
         return True
+    
 
 def start_fastapi():
     """Inicia o servidor FastAPI"""
@@ -154,8 +162,10 @@ def start_fastapi():
         print("\n👋 Encerrando API...")
         return True
     except FileNotFoundError:
-        print("❌ Uvicorn nao encontrado. Execute: pip install uvicorn[standard]")
+        print("❌ Uvicorn nao encontrado. Execute: "
+              "pip install uvicorn[standard]")
         return False
+
 
 def main():
     """Funcao principal"""
@@ -177,6 +187,7 @@ def main():
     
     # Inicia FastAPI
     start_fastapi()
+
 
 if __name__ == "__main__":
     main()
