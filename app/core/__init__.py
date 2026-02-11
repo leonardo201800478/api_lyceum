@@ -6,19 +6,23 @@ from .database import (
     get_sync_db,
     async_engine,
     sync_engine,
-    engine,  # Alias para compatibilidade
+    engine,
     AsyncSessionLocal,
-    SessionLocal
+    SyncSessionLocal,
+    SessionLocal,  # alias para compatibilidade
 )
+from .security import APISecurity
 
 __all__ = [
-    'settings',
-    'Base',
-    'get_db',
-    'get_sync_db', 
-    'async_engine',
-    'sync_engine',
-    'engine',
-    'AsyncSessionLocal',
-    'SessionLocal'
+    "settings",
+    "Base",
+    "get_db",
+    "get_sync_db",
+    "async_engine",
+    "sync_engine",
+    "engine",
+    "AsyncSessionLocal",
+    "SyncSessionLocal",
+    "SessionLocal",
+    "APISecurity",
 ]

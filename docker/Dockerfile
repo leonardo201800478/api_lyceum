@@ -1,23 +1,25 @@
+# docker/Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Instala dependências do sistema
+# Instala dependências do sistema necessárias para psycopg2
 RUN apt-get update && apt-get install -y \
     gcc \
-    postgresql-client \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia requirements primeiro para cache
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copia apenas os arquivos de dependências primeiro (cache)
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir -e .[dev]
 
-# Copia o código
+# Copia o resto do código
 COPY . .
 
-# Cria pasta migrations se não existir
-RUN mkdir -p migrations/versions
+# Torna o script de entrypoint executável
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-EXPOSE 8000
+ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]venv\Scripts\activate
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

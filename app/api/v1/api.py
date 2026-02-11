@@ -1,3 +1,4 @@
+# app/api/v1/api.py
 from fastapi import APIRouter
 from app.api.v1.endpoints import alunos, health, sync, security
 

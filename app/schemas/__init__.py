@@ -1,4 +1,4 @@
-# Corrigir o __init__.py de schemas:
+# app/schemas/__init__.py
 from .aluno import (
     AlunoBase,
     AlunoCreate,
@@ -6,6 +6,7 @@ from .aluno import (
     AlunoInDB,
     AlunoResponse,
     AlunoFull,
+    AlunoListResponse,
 )
 
 __all__ = [
@@ -15,5 +16,5 @@ __all__ = [
     "AlunoInDB",
     "AlunoResponse",
     "AlunoFull",
+    "AlunoListResponse",
 ]
-# Remover "PaginatedResponse" - nao esta definido em aluno.py
