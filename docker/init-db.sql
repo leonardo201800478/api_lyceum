@@ -1,30 +1,32 @@
--- ==============================================
--- INITIALIZATION SCRIPT FOR LYCEUM DATABASE
--- Executed automatically when PostgreSQL starts
--- ==============================================
-
--- Set timezone
 SET timezone = 'America/Sao_Paulo';
 
--- Create useful extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Create read-only user for monitoring (optional)
-CREATE USER lyceum_monitor WITH PASSWORD 'Monitor@Lyceum2024!ReadOnly';
+-- Usuário da API (FULL ACCESS)
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+        SELECT FROM pg_catalog.pg_roles WHERE rolname = 'lyceum_api_user'
+    ) THEN
+        CREATE USER lyceum_api_user WITH PASSWORD 'Lyceum@DB2024!SecureP@ssw0rd';
+    END IF;
+END
+$$;
+
+GRANT ALL PRIVILEGES ON DATABASE lyceum_production_db TO lyceum_api_user;
+GRANT ALL PRIVILEGES ON SCHEMA public TO lyceum_api_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON TABLES TO lyceum_api_user;
+
+-- Usuário somente leitura
+CREATE USER IF NOT EXISTS lyceum_monitor WITH PASSWORD 'Monitor@Lyceum2024!ReadOnly';
+
 GRANT CONNECT ON DATABASE lyceum_production_db TO lyceum_monitor;
 GRANT USAGE ON SCHEMA public TO lyceum_monitor;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO lyceum_monitor;
 
--- Set default privileges for future tables
-ALTER DEFAULT PRIVILEGES IN SCHEMA public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
 GRANT SELECT ON TABLES TO lyceum_monitor;
-
--- Log initialization
-DO $$
-BEGIN
-    RAISE NOTICE '✅ Database lyceum_production_db initialized successfully';
-    RAISE NOTICE '📅 Timezone: %', current_setting('TIMEZONE');
-    RAISE NOTICE '🔐 User: lyceum_api_user created';
-    RAISE NOTICE '👁️  Monitor user: lyceum_monitor created (read-only)';
-END $$;
